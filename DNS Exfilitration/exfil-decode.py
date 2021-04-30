@@ -92,6 +92,3 @@ if __name__ == '__main__':
         except SystemExit:
             print("Process interrupted by the kernel")
             os._exit(0)
-
-
-    
