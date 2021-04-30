@@ -11,6 +11,7 @@ sys.tracebacklimit = None
 
 data={"SRC": [], "DST": [], "DOMAIN": [], "TYPE": [], "DECODED_STRING": []}
 
+# UDP_FULL_DUPLEX was taken from https://gist.github.com/sdcampbell/2b62a22c4378639161c9bc5ce0d3dbc4 
 def udp_full_duplex(p):
     sess = "Other"
     if 'UDP' in p:
@@ -27,14 +28,6 @@ def Entropy(domain):
 def DNdecode(dns):
     decoded = ''
 
-    
-    """
-    NETBIOS DECODE
-    if re.compile("[0-9a-o]{50,63}").match(dns) :
-        parsed = re.compile("[0-9a-o]{50,63}").findall(dns)
-        string = ''.join(parsed)
-        i = iter(string.upper())
-        decoded = ''.join([chr(((ord(c)-ord('A'))<<4)+((ord(next(i))-ord('A'))&0xF)) for c in i])"""
     if re.compile("[0-9a-f]{30,63}").match(dns) :
         parsed = re.compile("[0-9a-o]{30,63}").findall(dns)
         string = ''.join(parsed)
@@ -53,7 +46,7 @@ def DNdecode(dns):
 
     return decoded
 
-def ParseAndDetect(pcapfile):
+def DetectDecode(pcapfile):
     packets = sniff(offline=pcapfile, lfilter = lambda s: "DNS" in s)
     for key, value in packets.sessions(udp_full_duplex).items():
         header = [item.strip('\'') for item in key.strip('][').split(', ')]
@@ -82,7 +75,7 @@ if __name__ == '__main__':
             parser.print_help()
             sys.exit(1)
         try:
-            data = ParseAndDetect(options.pcapfile)
+            data = DetectDecode(options.pcapfile)
             df   = pd.DataFrame(data)
             if options.out!=None and options.out.split(".")[len(options.out.split(".")) -1] == "csv":
                 df.to_csv(options.out)
