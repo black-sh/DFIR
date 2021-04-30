@@ -24,7 +24,6 @@ def Entropy(domain):
                     str(domain, 'latin-1')), float(len(str(domain, 'latin-1')))
     return entropy([k/lns for k in pr.values()], None, 2)
 
-
 def DNdecode(dns):
     decoded = ''
 
@@ -42,7 +41,6 @@ def DNdecode(dns):
         decoded = ''.join(topdomain)
     else:
         decoded = 'Unable to decode the data'
-
 
     return decoded
 
